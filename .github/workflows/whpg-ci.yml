@@ -98,7 +98,7 @@ jobs:
       matrix:
         el_version: ${{ fromJson(needs.detect-config.outputs.el_versions) }}
     container:
-      image: ghcr.io/warehouse-pg/whpg${{ needs.detect-config.outputs.whpg_major }}-${{ format('rocky{0}', matrix.el_version) }}-build
+      image: ghcr.io/warehouse-pg/whpg7-${{ format('rocky{0}', matrix.el_version) }}-build
       options: --privileged
     env:
       WHPG_MAJORVERSION: ${{ needs.detect-config.outputs.whpg_major }}
@@ -283,7 +283,7 @@ jobs:
       matrix:
         el_version: ${{ fromJson(needs.detect-config.outputs.el_versions) }}
     container:
-      image: ghcr.io/warehouse-pg/whpg${{ needs.detect-config.outputs.whpg_major }}-${{ format('rocky{0}', matrix.el_version) }}-build
+      image: ghcr.io/warehouse-pg/whpg7-${{ format('rocky{0}', matrix.el_version) }}-build
       options: --privileged
     env:
       WHPG_MAJORVERSION: ${{ needs.detect-config.outputs.whpg_major }}
