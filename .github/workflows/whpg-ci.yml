@@ -6,7 +6,7 @@ name: WHPG CI
 # =============================================================================
 env:
   WHPG7_EL_VERSIONS: '["8","9"]'            # WHPG 7 supported EL versions
-  WHPG6_EL_VERSIONS: '["7", "8", "9"]'  # WHPG 6 supported EL versions
+  WHPG6_EL_VERSIONS: '["7", "8", "9"]'      # WHPG 6 supported EL versions
   DEFAULT_EL_VERSION: '["8","9"]'           # Default for feature branches
   DEFAULT_INSTALLCHECK_TARGET: 'installcheck-small'  # Default installcheck target
 
