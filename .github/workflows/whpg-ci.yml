@@ -162,7 +162,7 @@ jobs:
       - name: Configure
         run: |
           CC='ccache gcc -m64' \
-          CXXFLAGS='-O3 -std=c++11' \
+          CXXFLAGS='-O2 -std=c++11 -include xercesc/util/XercesDefs.hpp -DXERCES_CPP_NAMESPACE_USE' \
           CFLAGS='-O2 -g3' LDFLAGS='-Wl,--enable-new-dtags -Wl,--export-dynamic' \
           ./configure --disable-gpperfmon --with-gssapi --enable-mapreduce --enable-orafce --enable-ic-proxy \
                       --enable-orca --with-libxml --with-pythonsrc-ext --with-uuid=e2fs --with-pgport=5432 --enable-tap-tests \
