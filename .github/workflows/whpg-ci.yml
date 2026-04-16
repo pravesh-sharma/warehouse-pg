@@ -196,10 +196,11 @@ jobs:
           ln -s . gpdb_src                          # For concourse scripts compatibility
           ln -s "${WHPG_SRC}" /workspace            # Easy to remember path
           ln -s "${WHPG_SRC}" /home/gpadmin/gpdb_src  # Accessible from gpadmin home
-          chown -h gpadmin:gpadmin /workspace /home/gpadmin/gpdb_src
+          userdel gpadmin 2>/dev/null || true
 
           export TEST_OS=centos
-          ./concourse/scripts/setup_gpadmin_user.bash || true
+          ./concourse/scripts/setup_gpadmin_user.bash
+          chown -h gpadmin:gpadmin /workspace /home/gpadmin/gpdb_src
           chown -R gpadmin:gpadmin /usr/local/greenplum-db-devel
           chown -R gpadmin:gpadmin "${WHPG_SRC}"
 
