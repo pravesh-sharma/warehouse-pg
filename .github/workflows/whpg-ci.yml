@@ -199,7 +199,7 @@ jobs:
           chown -h gpadmin:gpadmin /workspace /home/gpadmin/gpdb_src
 
           export TEST_OS=centos
-          ./concourse/scripts/setup_gpadmin_user.bash
+          ./concourse/scripts/setup_gpadmin_user.bash || true
           chown -R gpadmin:gpadmin /usr/local/greenplum-db-devel
           chown -R gpadmin:gpadmin "${WHPG_SRC}"
 
