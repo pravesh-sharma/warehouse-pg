@@ -166,6 +166,7 @@ jobs:
       # fail the build. Kept for compatibility with both versions using a single workflow.
       - name: Configure
         run: |
+          export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
           CC='ccache gcc -m64' \
           CXXFLAGS='-O2 -DXERCES_CPP_NAMESPACE_USE' \
           CFLAGS='-O2 -g3' LDFLAGS='-Wl,--enable-new-dtags -Wl,--export-dynamic ' \
