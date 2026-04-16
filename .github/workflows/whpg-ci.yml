@@ -149,6 +149,7 @@ jobs:
             cp -r ${WHPG_SRC}/src/backend/gporca/concourse/xerces-c xerces_patch/concourse
             /usr/bin/python2 xerces_patch/concourse/xerces-c/build_xerces.py --output_dir="/usr/local"
             rm -rf build xerces_patch
+            alternatives --set python /usr/bin/python2
           else
             # python3-psycopg2 not in container image
             yum install -y --setopt=keepcache=1 python3-psycopg2
