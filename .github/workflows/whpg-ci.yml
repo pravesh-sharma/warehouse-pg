@@ -143,7 +143,7 @@ jobs:
           yum install -y --setopt=keepcache=1 $INSTALL_PKGS
 
           if [[ "${WHPG_MAJORVERSION}" == "6" ]]; then
-            yum remove xerces-c xerces-c-devel 
+            yum remove -y xerces-c xerces-c-devel 
             yum install -y --setopt=keepcache=1 python2-devel
             mkdir -p xerces_patch/concourse
             cp -r ${WHPG_SRC}/src/backend/gporca/concourse/xerces-c xerces_patch/concourse
