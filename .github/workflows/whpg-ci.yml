@@ -392,13 +392,13 @@ jobs:
       # action-tmate uses apt-get internally which doesn't work on Rocky Linux.
       # Manual installation via yum is required for this container.
       - name: Install tmate
-        if: ${{ failure() && inputs.debug_enabled }}
+        if: ${{ failure() }}
         run: |
           yum install -y --setopt=keepcache=1 epel-release
           yum install -y --setopt=keepcache=1 tmate
 
       - name: Setup tmate session
-        if: ${{ failure() && inputs.debug_enabled }}
+        if: ${{ failure() }}
         uses: mxschmitt/action-tmate@v3
         timeout-minutes: 30
         with:
