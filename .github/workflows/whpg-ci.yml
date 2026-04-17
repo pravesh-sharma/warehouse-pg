@@ -333,6 +333,7 @@ jobs:
           yum install -y --setopt=keepcache=1 ccache
 
           if [[ "${WHPG_MAJORVERSION}" == "6" ]]; then
+            yum remove -y xerces-c xerces-c-devel
             yum install -y --setopt=keepcache=1 python2-devel
           fi
 
