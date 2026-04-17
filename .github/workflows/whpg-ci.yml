@@ -344,7 +344,9 @@ jobs:
 
       - name: Run ORCA unit tests
         id: tests
-        run: bash .github/scripts/run-orca-tests.bash
+        run: |
+          alternatives --set python /usr/bin/python2
+          bash .github/scripts/run-orca-tests.bash
         env:
           # For cmake builds (ORCA)
           CMAKE_C_COMPILER_LAUNCHER: ccache
