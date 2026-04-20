@@ -218,7 +218,6 @@ jobs:
         id: tests
         run: |
           export MAKE_TEST_COMMAND="${TEST_TARGET}"
-          alternatives --set python /usr/bin/python3
           bash .github/scripts/run-installcheck.bash
 
       - name: Installcheck Summary
