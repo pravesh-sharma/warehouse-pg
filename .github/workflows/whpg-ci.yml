@@ -189,7 +189,7 @@ jobs:
 
       - name: Install
         id: install
-        run: make install -j$(nproc) -C ${WHPG_SRC}/src/pl/plpython
+        run: make install -j$(nproc)
 
       - name: Setup gpadmin user
         run: |
