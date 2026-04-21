@@ -150,7 +150,6 @@ jobs:
             /usr/bin/python2 xerces_patch/concourse/xerces-c/build_xerces.py --output_dir="/usr/local"
             rm -rf build xerces_patch
             ln -s /usr/local/lib/libxerces-c-3.1.so /usr/lib64/libxerces-c-3.1.so
-            alternatives --set python /usr/bin/python3
             ldconfig
           else
             # python3-psycopg2 not in container image
@@ -181,9 +180,7 @@ jobs:
 
       - name: Build
         id: build
-        run: |
-          make clean -C ${WHPG_SRC}/src/pl/plpython
-          make -j$(nproc)
+        run: make -j$(nproc)
 
       - name: Show ccache stats
         run: ccache --show-stats
