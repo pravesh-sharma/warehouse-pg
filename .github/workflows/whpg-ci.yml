@@ -168,7 +168,7 @@ jobs:
       # fail the build. Kept for compatibility with both versions using a single workflow.
       - name: Configure
         run: |
-          update-alternatives --install /usr/bin/python python /usr/bin/python3
+          alternatives --set python /usr/bin/python3
           PYTHON=/usr/bin/python3 \
           CC='ccache gcc -m64' \
           CFLAGS='-O2 -g3' LDFLAGS='-Wl,--enable-new-dtags -Wl,--export-dynamic ' \
