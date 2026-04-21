@@ -182,7 +182,7 @@ jobs:
         id: build
         run: |
           make clean -C ${WHPG_SRC}/src/pl/plpython
-          make -j$(nproc) -C ${WHPG_SRC}/src/pl/plpython
+          make -j$(nproc)
 
       - name: Show ccache stats
         run: ccache --show-stats
