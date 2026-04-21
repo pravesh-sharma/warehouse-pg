@@ -181,8 +181,8 @@ jobs:
       - name: Build
         id: build
         run: |
-          make clean -C src/pl/plpython
-          make -j$(nproc) -C src/pl/plpython
+          make clean -C ${WHPG_SRC}/src/pl/plpython
+          make -j$(nproc) -C ${WHPG_SRC}/src/pl/plpython
 
       - name: Show ccache stats
         run: ccache --show-stats
