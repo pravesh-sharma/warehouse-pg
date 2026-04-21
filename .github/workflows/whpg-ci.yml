@@ -149,7 +149,6 @@ jobs:
             cp -r ${WHPG_SRC}/src/backend/gporca/concourse/xerces-c xerces_patch/concourse
             /usr/bin/python2 xerces_patch/concourse/xerces-c/build_xerces.py --output_dir="/usr/local"
             rm -rf build xerces_patch
-            alternatives --set python /usr/bin/python2
             ln -s /usr/local/lib/libxerces-c-3.1.so /usr/lib64/libxerces-c-3.1.so
             ldconfig
           else
@@ -181,7 +180,9 @@ jobs:
 
       - name: Build
         id: build
-        run: make -j$(nproc)
+        run: |
+          make clean -C src/pl/plpython
+          make -j$(nproc) -C src/pl/plpython
 
       - name: Show ccache stats
         run: ccache --show-stats
