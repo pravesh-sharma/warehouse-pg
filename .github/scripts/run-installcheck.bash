@@ -71,44 +71,6 @@ function look4diffs() {
     ls -la "${RESULTS_DIR}/"
 }
 
-function mangle_plpythonu_to_plpython3u() {
-    # When built with Python 3, the extension is plpython3u but many test SQL
-    # files outside src/pl/plpython hardcode plpythonu/plpython2u. Replace these
-    # references in-place so the tests can find the correct language/extension.
-    echo "Mangling plpythonu -> plpython3u in test SQL files..."
-
-    local dirs=(
-        "${WHPG_SRC}/src/test/regress/sql"
-        "${WHPG_SRC}/src/test/regress/expected"
-        "${WHPG_SRC}/src/test/regress/input"
-        "${WHPG_SRC}/src/test/regress/output"
-        "${WHPG_SRC}/src/test/isolation2/sql"
-        "${WHPG_SRC}/src/test/isolation2/expected"
-        "${WHPG_SRC}/src/test/isolation2/helpers"
-        "${WHPG_SRC}/src/test/isolation2/input"
-        "${WHPG_SRC}/src/test/isolation2/output"
-        "${WHPG_SRC}/src/test/heap_checksum/sql"
-        "${WHPG_SRC}/src/test/heap_checksum/expected"
-        "${WHPG_SRC}/src/test/walrep/sql"
-        "${WHPG_SRC}/src/test/walrep/expected"
-        "${WHPG_SRC}/contrib"
-    )
-
-    for dir in "${dirs[@]}"; do
-        [ -d "${dir}" ] || continue
-        find "${dir}" -type f \( -name '*.sql' -o -name '*.out' -o -name '*.source' \) \
-            -exec grep -l -i 'plpythonu\|plpython2u' {} + 2>/dev/null | while read -r file; do
-            sed -i \
-                -e 's/LANGUAGE plpythonu/LANGUAGE plpython3u/Ig' \
-                -e 's/LANGUAGE plpython2u/LANGUAGE plpython3u/Ig' \
-                -e 's/EXTENSION plpythonu/EXTENSION plpython3u/Ig' \
-                -e 's/EXTENSION plpython2u/EXTENSION plpython3u/Ig' \
-                "${file}"
-        done
-    done
-
-    echo "Mangling complete."
-}
 
 function run_installcheck() {
     local test_target="${MAKE_TEST_COMMAND}"
@@ -137,12 +99,9 @@ function run_installcheck() {
 
     # Run tests based on version
     if [[ "${WHPG_MAJORVERSION}" == 6* ]]; then
-        # WHPG 6 is built with Python 3 but test files reference plpythonu.
-        # Mangle all test SQL files to use plpython3u instead.
-        mangle_plpythonu_to_plpython3u
 
         # WHPG 6: Test PL/Python3 first
-        make installcheck -C "${WHPG_SRC}/src/pl/plpython" python_majorversion=3 || true
+        make installcheck -C "${WHPG_SRC}/src/pl/plpython" || true
 
         export TEST_PGFDW=1
         make -s ${test_target}
