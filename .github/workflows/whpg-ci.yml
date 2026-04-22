@@ -163,12 +163,17 @@ jobs:
           ccache --set-config=compression=true
           ccache --zero-stats
 
-      # Note: --with-quicklz, --enable-mapreduce, and --with-pythonsrc-ext are recognized
+      - name: Setup Python 2 for initial build
+        if: ${{ env.WHPG_MAJORVERSION == '6' }}
+        run: |
+          alternatives --set python /usr/bin/python2
+          python --version
+
+      # Note: --enable-mapreduce, and --with-pythonsrc-ext are recognized
       # only in whpg6. They produce "unrecognized options" warnings in whpg7 but don't
       # fail the build. Kept for compatibility with both versions using a single workflow.
       - name: Configure
         run: |
-          PYTHON=/usr/bin/python3 \
           CC='ccache gcc -m64' \
           CFLAGS='-O2 -g3' LDFLAGS='-Wl,--enable-new-dtags -Wl,--export-dynamic ' \
           ./configure --disable-gpperfmon --with-gssapi --enable-mapreduce --enable-orafce --enable-ic-proxy \
@@ -189,6 +194,22 @@ jobs:
         id: install
         run: |
           make install -j$(nproc)
+
+      - name: Rebuild PL/Python with Python 3 (WHPG 6 only)
+        if: ${{ env.WHPG_MAJORVERSION == '6' }}
+        run: |
+          PYTHON=/usr/bin/python3 \
+          CC='ccache gcc -m64' \
+          CFLAGS='-O2 -g3' LDFLAGS='-Wl,--enable-new-dtags -Wl,--export-dynamic ' \
+          ./configure --disable-gpperfmon --with-gssapi --enable-mapreduce --enable-orafce --enable-ic-proxy \
+                      --enable-orca --with-libxml --with-pythonsrc-ext --with-uuid=e2fs --with-pgport=5432 --enable-tap-tests \
+                      --enable-debug-extensions --with-perl --with-python --with-openssl --with-pam --with-ldap --with-includes="" \
+                      --with-libraries="" \
+                      --prefix=/usr/local/greenplum-db-devel \
+                      --mandir=/usr/local/greenplum-db-devel/man
+
+          make clean -C src/pl/plpython
+          make -j$(nproc) install -C src/pl/plpython
 
       - name: Setup gpadmin user
         run: |
@@ -214,6 +235,12 @@ jobs:
           source concourse/scripts/common.bash
           export WITH_MIRRORS=false
           make_cluster
+
+      - name: Setup Python 3 for plpython rebuild (WHPG 6 only)
+        if: ${{ env.WHPG_MAJORVERSION == '6' }}
+        run: |
+          alternatives --set python /usr/bin/python3
+          python --version
 
       - name: Run installcheck tests
         id: tests
