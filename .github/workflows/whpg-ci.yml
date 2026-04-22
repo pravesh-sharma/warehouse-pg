@@ -143,19 +143,24 @@ jobs:
           yum install -y --setopt=keepcache=1 $INSTALL_PKGS
 
           if [[ "${WHPG_MAJORVERSION}" == "6" ]]; then
+            # Removing xerces-c as we need xerces 3.1
             yum remove -y xerces-c xerces-c-devel
             yum install -y --setopt=keepcache=1 python2-devel
+          else
+            # python3-psycopg2 not in container image
+            yum install -y --setopt=keepcache=1 python3-psycopg2
+            ln -sf /usr/bin/pytest-3 /usr/bin/pytest || true
+          fi
+
+      - name: Build Xerces with Python 2 (WHPG 6 only)
+        if: ${{ env.WHPG_MAJORVERSION == '6' }}
+        run: |
             mkdir -p xerces_patch/concourse
             cp -r ${WHPG_SRC}/src/backend/gporca/concourse/xerces-c xerces_patch/concourse
             /usr/bin/python2 xerces_patch/concourse/xerces-c/build_xerces.py --output_dir="/usr/local"
             rm -rf build xerces_patch
             ln -s /usr/local/lib/libxerces-c-3.1.so /usr/lib64/libxerces-c-3.1.so
             ldconfig
-          else
-            # python3-psycopg2 not in container image
-            yum install -y --setopt=keepcache=1 python3-psycopg2
-            ln -sf /usr/bin/pytest-3 /usr/bin/pytest || true
-          fi
 
       - name: Configure ccache
         run: |
@@ -163,13 +168,13 @@ jobs:
           ccache --set-config=compression=true
           ccache --zero-stats
 
-      - name: Setup Python 2 for initial build
+      - name: Set up Python 2 for initial build (WHPG 6 only)
         if: ${{ env.WHPG_MAJORVERSION == '6' }}
         run: |
           alternatives --set python /usr/bin/python2
           python --version
 
-      # Note: --enable-mapreduce, and --with-pythonsrc-ext are recognized
+      # Note: --enable-mapreduce and --with-pythonsrc-ext are recognized
       # only in whpg6. They produce "unrecognized options" warnings in whpg7 but don't
       # fail the build. Kept for compatibility with both versions using a single workflow.
       - name: Configure
@@ -236,7 +241,7 @@ jobs:
           export WITH_MIRRORS=false
           make_cluster
 
-      - name: Setup Python 3 for plpython rebuild (WHPG 6 only)
+      - name: Set up Python 3 for plpython test cases (WHPG 6 only)
         if: ${{ env.WHPG_MAJORVERSION == '6' }}
         run: |
           alternatives --set python /usr/bin/python3
@@ -297,13 +302,13 @@ jobs:
       # action-tmate uses apt-get internally which doesn't work on Rocky Linux.
       # Manual installation via yum is required for this container.
       - name: Install tmate
-        if: ${{ failure() }}
+        if: ${{ failure() && inputs.debug_enabled }}
         run: |
           yum install -y --setopt=keepcache=1 epel-release
           yum install -y --setopt=keepcache=1 tmate
 
       - name: Setup tmate session
-        if: ${{ failure() }}
+        if: ${{ failure() && inputs.debug_enabled }}
         uses: mxschmitt/action-tmate@v3
         timeout-minutes: 300
         with:
@@ -421,13 +426,13 @@ jobs:
       # action-tmate uses apt-get internally which doesn't work on Rocky Linux.
       # Manual installation via yum is required for this container.
       - name: Install tmate
-        if: ${{ failure() }}
+        if: ${{ failure() && inputs.debug_enabled }}
         run: |
           yum install -y --setopt=keepcache=1 epel-release
           yum install -y --setopt=keepcache=1 tmate
 
       - name: Setup tmate session
-        if: ${{ failure() }}
+        if: ${{ failure() && inputs.debug_enabled }}
         uses: mxschmitt/action-tmate@v3
         timeout-minutes: 30
         with:
