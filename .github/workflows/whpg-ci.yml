@@ -236,11 +236,6 @@ jobs:
           export WITH_MIRRORS=false
           make_cluster
 
-      - name: Set up Python 3 for plpython test cases
-        run: |
-          alternatives --set python /usr/bin/python3
-          python --version
-
       - name: Run installcheck tests
         id: tests
         run: |
