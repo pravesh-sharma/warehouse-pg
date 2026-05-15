@@ -236,6 +236,10 @@ jobs:
           export WITH_MIRRORS=true
           make_cluster
 
+      - name: Configure Git safe directory
+        run: |
+          git config --global --add safe.directory /__w/warehouse-pg/warehouse-pg
+
       - name: Run installcheck tests
         id: tests
         run: |
