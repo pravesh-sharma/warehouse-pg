@@ -239,6 +239,10 @@ jobs:
       - name: Configure Git safe directory
         run: |
           git config --global --add safe.directory /__w/warehouse-pg/warehouse-pg
+          git config --global --add safe.directory $WHPG_SRC
+          # Also run as gpadmin user since tests execute as that user
+          su - gpadmin -c "git config --global --add safe.directory /__w/warehouse-pg/warehouse-pg"
+          su - gpadmin -c "git config --global --add safe.directory $WHPG_SRC"
 
       - name: Run installcheck tests
         id: tests
