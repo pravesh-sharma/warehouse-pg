@@ -109,6 +109,11 @@ jobs:
           fetch-depth: 1024
           fetch-tags: true
 
+      - name: Configure Git safe directory
+        run: |
+          git config --global --add safe.directory /__w/warehouse-pg/warehouse-pg
+          git config --global --add safe.directory $WHPG_SRC
+
       - name: Container info
         run: |
           echo "OS: $(cat /etc/os-release | grep PRETTY_NAME | cut -d= -f2 | tr -d '\"')"
@@ -237,10 +242,8 @@ jobs:
           export WITH_MIRRORS=true
           make_cluster
 
-      - name: Configure Git safe directory
+      - name: Configure Git safe directory for gpadmin
         run: |
-          git config --global --add safe.directory /__w/warehouse-pg/warehouse-pg
-          git config --global --add safe.directory $WHPG_SRC
           # Also run as gpadmin user since tests execute as that user
           su - gpadmin -c "git config --global --add safe.directory /__w/warehouse-pg/warehouse-pg"
           su - gpadmin -c "git config --global --add safe.directory $WHPG_SRC"
@@ -248,7 +251,7 @@ jobs:
       - name: Run installcheck tests
         id: tests
         run: |
-          export MAKE_TEST_COMMAND="${TEST_TARGET}"
+          export MAKE_TEST_COMMAND="-k PGOPTIONS='-c optimizer=on' ${TEST_TARGET}"
           bash .github/scripts/run-installcheck.bash
 
       - name: Installcheck Summary
