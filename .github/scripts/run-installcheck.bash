@@ -7,7 +7,9 @@ set -eox pipefail
 # Required configuration (from workflow env)
 : "${WHPG_SRC:?WHPG_SRC not set}"
 : "${RESULTS_DIR:?RESULTS_DIR not set}"
-: "${MAKE_TEST_COMMAND:?MAKE_TEST_COMMAND not set}"
+: "${TEST_TARGET:?TEST_TARGET not set}"
+: "${MAKE_FLAGS:?MAKE_FLAGS not set}"
+: "${PGOPTIONS:?PGOPTIONS not set}"
 : "${WHPG_MAJORVERSION:?WHPG_MAJORVERSION not set}"
 
 # Source environment explicitly (no login shell / .bash_profile dependency)
