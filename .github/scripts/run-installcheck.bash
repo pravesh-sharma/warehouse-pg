@@ -72,7 +72,7 @@ function look4diffs() {
 }
 
 function run_installcheck() {
-    local test_target="${MAKE_TEST_COMMAND}"
+    local test_target="${TEST_TARGET}"
 
     echo "========================================================================"
     echo "Running installcheck: ${test_target}"
@@ -102,10 +102,10 @@ function run_installcheck() {
         make installcheck -C "${WHPG_SRC}/src/pl/plpython" python_majorversion=3
 
         export TEST_PGFDW=1
-        make -s ${test_target}
+        make -s ${MAKE_FLAGS} PGOPTIONS="${PGOPTIONS}" ${test_target}
     else
         # WHPG 7+
-        PG_TEST_EXTRA="kerberos ssl" make -s ${test_target}
+        PG_TEST_EXTRA="kerberos ssl" make -s ${MAKE_FLAGS} PGOPTIONS="${PGOPTIONS}" ${test_target}
     fi
 
     echo "========================================================================"

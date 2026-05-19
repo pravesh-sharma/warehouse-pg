@@ -251,7 +251,9 @@ jobs:
       - name: Run installcheck tests
         id: tests
         run: |
-          export MAKE_TEST_COMMAND="-k PGOPTIONS=\"-c optimizer=on\" ${TEST_TARGET}"
+          export TEST_TARGET=${TEST_TARGET}
+          export MAKE_FLAGS="-k"
+          export PGOPTIONS="-c optimizer=on"
           bash .github/scripts/run-installcheck.bash
 
       - name: Installcheck Summary
