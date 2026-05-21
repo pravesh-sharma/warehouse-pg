@@ -5,7 +5,7 @@ name: WarehousePG CI
 # Change these values to update which EL versions are tested
 # =============================================================================
 env:
-  EL_VERSIONS: '["8", "9"]'                          # Supported EL versions
+  EL_VERSIONS: '["8"]'                               # EL8 only — WHPG 6 needs Python 2 which EL9 does not ship; EL9 is covered by warehouse-pg-packaging
   DEFAULT_EL_VERSION: '["8"]'                        # Default for feature branches
   DEFAULT_INSTALLCHECK_TARGET: 'installcheck-small'  # Default installcheck target
 
@@ -41,7 +41,6 @@ on:
         options:
           - 'all'
           - '8'
-          - '9'
       debug_enabled:
         description: 'Enable tmate debugging on failure'
         required: false
@@ -179,7 +178,7 @@ jobs:
           CC='ccache gcc -m64' \
           CFLAGS='-O2 -g3' LDFLAGS='-Wl,--enable-new-dtags -Wl,--export-dynamic' \
           ./configure --disable-gpperfmon --with-gssapi --enable-mapreduce --enable-orafce --enable-ic-proxy \
-                      --enable-orca --with-libxml --with-pythonsrc-ext --with-uuid=e2fs --with-pgport=5432 --enable-tap-tests --with-llvm \
+                      --enable-orca --with-libxml --with-pythonsrc-ext --with-uuid=e2fs --with-pgport=5432 --enable-tap-tests \
                       --enable-debug-extensions --with-perl --with-python --with-openssl --with-pam --with-ldap --with-includes="" \
                       --with-libraries="" --disable-rpath \
                       --prefix=/usr/local/greenplum-db-devel \
@@ -207,7 +206,7 @@ jobs:
           CC='ccache gcc -m64' \
           CFLAGS='-O2 -g3' LDFLAGS='-Wl,--enable-new-dtags -Wl,--export-dynamic' \
           ./configure --disable-gpperfmon --with-gssapi --enable-mapreduce --enable-orafce --enable-ic-proxy \
-                      --enable-orca --with-libxml --with-pythonsrc-ext --with-uuid=e2fs --with-pgport=5432 --enable-tap-tests --with-llvm \
+                      --enable-orca --with-libxml --with-pythonsrc-ext --with-uuid=e2fs --with-pgport=5432 --enable-tap-tests \
                       --enable-debug-extensions --with-perl --with-python --with-openssl --with-pam --with-ldap --with-includes="" \
                       --with-libraries="" \
                       --prefix=/usr/local/greenplum-db-devel \
@@ -254,8 +253,6 @@ jobs:
           export TEST_TARGET=${TEST_TARGET}
           export MAKE_FLAGS="-k"
           export PGOPTIONS="-c optimizer=on"
-          export gp_gang_creation_retry_timer=3000  # Increase retry timer
-          export gp_gang_creation_retry_count=10    # Increase retry count
           bash .github/scripts/run-installcheck.bash
 
       - name: Installcheck Summary

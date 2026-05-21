@@ -73,6 +73,26 @@ function look4diffs() {
     ls -la "${RESULTS_DIR}/"
 }
 
+function apply_ci_test_skips() {
+    # CI-only test skips. The schedule file is modified on the ephemeral runner;
+    # the repo copy is untouched, so local `make installcheck-world` is unaffected.
+    # Add tests below to skip them on CI without committing changes to the schedule.
+    local schedule="${WHPG_SRC}/src/test/isolation2/isolation2_schedule"
+    local -a skips=(
+        fts_segment_reset
+        pg_rewind_fail_missing_xlog
+    )
+
+    [ -f "${schedule}" ] || return 0
+
+    for t in "${skips[@]}"; do
+        sed -i -E "/^test: ${t}\$/ s/^/# CI-SKIP: /" "${schedule}"
+    done
+
+    echo "Applied CI test skips to ${schedule}:"
+    grep -nE '^# CI-SKIP:' "${schedule}" || true
+}
+
 function run_installcheck() {
     local test_target="${TEST_TARGET}"
 
@@ -85,6 +105,8 @@ function run_installcheck() {
     trap look4diffs ERR
 
     cd "${WHPG_SRC}"
+
+    apply_ci_test_skips
 
     # Enable core dumps
     ulimit -c unlimited
